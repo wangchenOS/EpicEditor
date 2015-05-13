@@ -41,9 +41,11 @@
   function _getStyle(el, styleProp) {
     var x = el
       , y = null;
+      /*得到CSS样式,这里分支条件为了不同浏览器兼容效果*/
     if (window.getComputedStyle) {
       y = document.defaultView.getComputedStyle(x, null).getPropertyValue(styleProp);
     }
+   /* 获取计算后的样式，也叫当前样式、最终样式*/
     else if (x.currentStyle) {
       y = x.currentStyle[styleProp];
     }
@@ -99,6 +101,7 @@
    * @returns {int}
    */
   function _outerHeight(el) {
+  //    按十进制解析
     var b = parseInt(_getStyle(el, 'border-top-width'), 10) + parseInt(_getStyle(el, 'border-bottom-width'), 10)
       , p = parseInt(_getStyle(el, 'padding-top'), 10) + parseInt(_getStyle(el, 'padding-bottom'), 10)
       , w = parseInt(_getStyle(el, 'height'), 10)
@@ -120,7 +123,7 @@
     id = id || '';
     var headID = context.getElementsByTagName("head")[0]
       , cssNode = context.createElement('link');
-    
+    //    JSON对象
     _applyAttrs(cssNode, {
       type: 'text/css'
     , id: id
@@ -140,6 +143,8 @@
 
   // Feature detects an iframe to get the inner document for writing to
   function _getIframeInnards(el) {
+//    contentWindow 兼容各个浏览器，可取得子窗口的 window 对象。
+//    contentDocument Firefox 支持，> ie8 的ie支持。可取得子窗口的 document 对象。
     return el.contentDocument || el.contentWindow.document;
   }
 
@@ -209,6 +214,7 @@
     if (navigator.appName == 'Microsoft Internet Explorer') {
       re = /MSIE ([0-9]{1,}[\.0-9]{0,})/;
       if (re.exec(ua) != null) {
+//        RegExp.$1 第一个捕获组,即满足条件的第一个字符串
         rv = parseFloat(RegExp.$1, 10);
       }
     }
@@ -222,6 +228,33 @@
    * probably wont get native fullscreen until Safari's fullscreen is fixed
    * @returns {Boolean} true if Safari
    */
+    /** Window Navigator
+    window.navigator 对象在编写时可不使用 window 这个前缀。
+    实例
+    <div id="example"></div>
+    
+    <script>
+    
+    txt = "<p>Browser CodeName: " + navigator.appCodeName + "</p>";
+    txt+= "<p>Browser Name: " + navigator.appName + "</p>";
+    txt+= "<p>Browser Version: " + navigator.appVersion + "</p>";
+    txt+= "<p>Cookies Enabled: " + navigator.cookieEnabled + "</p>";
+    txt+= "<p>Platform: " + navigator.platform + "</p>";
+    txt+= "<p>User-agent header: " + navigator.userAgent + "</p>";
+    txt+= "<p>User-agent language: " + navigator.systemLanguage + "</p>";
+    
+    document.getElementById("example").innerHTML=txt;
+    
+    </script>
+    警告：来自 navigator 对象的信息具有误导性，不应该被用于检测浏览器版本，这是因为：
+    navigator 数据可被浏览器使用者更改
+    浏览器无法报告晚于浏览器发布的新操作系统
+    浏览器检测
+    由于 navigator 可误导浏览器检测，使用对象检测可用来嗅探不同的浏览器。
+    由于不同的浏览器支持不同的对象，您可以使用对象来检测浏览器。例如，由于只有 Opera 支持属性 "window.opera"，您可以据此识别出 Opera。
+    例子：if (window.opera) {...some action...} 
+    
+    */
   function _isSafari() {
     var n = window.navigator;
     return n.userAgent.indexOf('Safari') > -1 && n.userAgent.indexOf('Chrome') == -1;
@@ -335,9 +368,9 @@
         , defaultContent: ''
           , autoSave: 100 // Set to false for no auto saving
           }
-        , theme: { base: '/themes/base/epiceditor.css'
-          , preview: '/themes/preview/github.css'
-          , editor: '/themes/editor/epic-dark.css'
+        , theme: { base: '../themes/base/epiceditor.css'
+          , preview: '../themes/preview/github.css'
+          , editor: '../themes/editor/epic-dark.css'
           }
         , focusOnLoad: false
         , shortcut: { modifier: 18 // alt keycode
@@ -410,6 +443,8 @@
 
     if (typeof self.settings.textarea == 'undefined' && typeof self.element != 'undefined') {
       var textareas = self.element.getElementsByTagName('textarea');
+      //var textareas = self.element.getElementById("my-edit-area");
+      alert(textareas.length);
       if (textareas.length > 0) {
         self.settings.textarea = textareas[0];
         _applyStyles(self.settings.textarea, {
